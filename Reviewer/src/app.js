@@ -50,7 +50,8 @@ class App {
                 elements: "#info > div"
             },
             rawContent: {
-
+                elements: "#raw-content > div",
+                collapsibles: "#raw-content > div .collapsible"
             }
         }
 
@@ -109,56 +110,63 @@ class App {
     renderFields() {
         console.log('RenderFields')
         if (this.page.info.length == 0) {
+            $(this.$selectors.info.block).html('')
             $(this.$selectors.info.block).css("display", "none")
             return
         }
 
-        $(this.$selectors.info.block).css("display", "unset")
-        const infoElements = this.page.info.map(info => {
-            const typeStyle = ''
-            if (typeof info.value == 'object') {
-                const elLines = [
+        const elements = this.page.info.map(info => {
+            // Normal string rendering
+            if (typeof info.value != 'object') {
+                return ([
                     '<div class="info-line">',
-                    '<div class="info-title">' + info.name + '</div>'
-                ]
-
-                info.value.forEach(el => {
-                    if (info.type == 'missionTags') {
-                        console.log(el)
-                        let md = TagsMarkdown[el]
-                        if (!md) {
-                            md = TagsMarkdown.default
-                        }
-                        elLines.push(
-                            '<div class="info-value info-value-list tag" style="'
-                            + `background-color:${md.bg};color:${md.text}`
-                            + '">' + `[${el}] ${md.tooltip}` + '</div>'
-                        )
-                    } else {
-                        elLines.push('<div class="info-value info-value-list">' + el + '</div>')
-                    }
-
-                })
-                elLines.push('</div>')
-                return elLines.join('')
+                    '<div class="info-title">' + info.name + '</div>',
+                    '<div class="info-value">' + info.value + '</div>',
+                    '</div>'
+                ]).join('')
             }
 
-            return ([
+            // Array value rendering
+            const elLines = [
                 '<div class="info-line">',
-                '<div class="info-title">' + info.name + '</div>',
-                '<div class="info-value">' + info.value + '</div>',
-                '</div>'
-            ]).join('')
+                '<div class="info-title">', info.name, '</div>'
+            ]
+
+            info.value.forEach(el => {
+                if (info.type == 'missionTags') {
+                    // Formatting of tags
+                    console.log(el)
+                    let md = TagsMarkdown[el]
+                    if (!md) {
+                        md = TagsMarkdown.default
+                    }
+                    elLines.push(
+                        '<div class="info-value info-value-list tag" style="'
+                        + `background-color:${md.bg};color:${md.text}`
+                        + '">'
+                        + `[${el}] ${md.tooltip}`
+                        + '</div>'
+                    )
+                } else {
+                    // Simple multiline
+                    elLines.push('<div class="info-value info-value-list">' + el + '</div>')
+                }
+            })
+            elLines.push('</div>')
+            return elLines.join('')
         })
-        $(this.$selectors.info.elements).html(infoElements.join(''))
+        $(this.$selectors.info.elements).html(elements.join(''))
+        $(this.$selectors.info.block).css("display", null)
     }
 
-
     renderFileContent() {
-        $('#raw-content > div').html('')
-        console.assert(this.page.rawContent, `There is no Raw Content for page with id ${this.pageId}`)
+        if (!this.page.rawContent) {
+            $(this.$selectors.rawContent.elements).html('')
+            $(this.$selectors.rawContent.elements).css("display", "none")
+            return
+        }
 
-        this.page.rawContent.forEach(raw => {
+        const elements = this.page.rawContent.map(raw => {
             const header = raw.filename
             let renderedContent = ''
             if (raw.language == 'image') {
@@ -169,22 +177,23 @@ class App {
                 )
             }
 
-            $('#raw-content > div').append(
-                `<button class='collapsible'>${header}</button>`
-                + '<div id="raw-content-line" class="content"><pre><code>'
-                + renderedContent
-                + '</pre></code></div>'
-            )
+            return ([
+                `<button class='collapsible'>${header}</button>`,
+                '<div id="raw-content-line" class="content"><pre><code>',
+                renderedContent,
+                '</pre></code></div>'
+            ]).join("")
         })
 
-        $('#raw-content > div .collapsible').on('click', (e)=>{
+        $(this.$selectors.rawContent.elements).html(elements.join(""))
+        $(this.$selectors.rawContent.elements).css("display", null)
+
+        $(this.$selectors.rawContent.collapsibles).on('click', (e)=>{
             e.currentTarget.classList.toggle('collapsible-active')
             const content = e.currentTarget.nextElementSibling;
             content.style.maxHeight = content.style.maxHeight ? null : `${content.scrollHeight}px`;
         })
     }
-
-
 }
 
 

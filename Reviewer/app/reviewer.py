@@ -1,5 +1,6 @@
 from .mission_sqm_reader import MissionSqmReader
-from .tsf_reader import tSF_Briefing_Reader
+from .tsf_reader import tSFrameworkSettingsReader, tSFBriefingReader, \
+  tSFIntroTextReader
 from .report_generator import ReportGenerator
 
 import os
@@ -10,6 +11,7 @@ from enum import Enum, StrEnum, auto
 class PageTitle(StrEnum):
     Mission = "Миссия"
     tSF_Briefing = "tSF / Briefing"
+    tSF_IntroText = "tSF / IntroText"
 
     def __repr__(self):
         return f'"{self.value}"'
@@ -29,12 +31,23 @@ class Reviewer:
     def __init__(self, path):
         self.path = path
         self.mission_sqm = None
+        self.tsf_settings = None
+        self.tsf_briefing = None
+        self.tsf_intro_text = None
         self.reporter = None
 
     def review(self):
         print('Review initiated')
         self.mission_sqm = MissionSqmReader(self.path)
-        self.tsf_briefing = tSF_Briefing_Reader(self.path)
+        self.tsf_settings = tSFrameworkSettingsReader(self.path, True)
+        self.tsf_briefing = tSFBriefingReader(
+            self.path,
+            self.tsf_settings.get_module_state(tSFBriefingReader.MODULE)
+        )
+        self.tsf_intro_text = tSFIntroTextReader(
+            self.path,
+            self.tsf_settings.get_module_state(tSFIntroTextReader.MODULE)
+        )
 
         self.generate_report()
 
@@ -152,6 +165,35 @@ class Reviewer:
                 {
                     "filename": self.tsf_briefing.SETTINGS_FILE,
                     "content": ''.join(self.tsf_briefing.settings),
+                    "language": "yaml"
+                }
+            ]
+        })
+
+        # tSF IntroText
+        data['pages'].append({
+            "name": PageTitle.tSF_IntroText,
+            "status": PageStatus.OK,
+            "info": [
+                {
+                    "name": "Дата",
+                    "value": self.tsf_intro_text.settings_yaml['Date']
+                },
+                {
+                    "name": "Локация",
+                    "value": self.tsf_intro_text.settings_yaml['Location']
+                },
+                {
+                    "name": "Операция",
+                    "value": self.tsf_intro_text.settings_yaml['Operation']
+                },
+            ],
+            "validation": [],
+            "issues": [],
+            "rawContent": [
+                {
+                    "filename": self.tsf_intro_text.SETTINGS_FILE,
+                    "content": ''.join(self.tsf_intro_text.settings),
                     "language": "yaml"
                 }
             ]

@@ -62,6 +62,8 @@ HTML_BODY = """
                 <h3>Содержимое</h3>
                 <div></div>
             </div>
+
+            <div id="footer"></div>
         </div>
     </body>
 """

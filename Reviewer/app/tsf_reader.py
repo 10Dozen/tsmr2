@@ -9,9 +9,10 @@ class tSFModuleReader:
     MODULE = ''
     SETTINGS_FILE = 'Settings.yaml'
 
-    def __init__(self, path):
+    def __init__(self, path, is_active):
         self.path = os.path.join(path, self.FRAMEWORK_DIR,
                                  self.MODULES_DIR, self.MODULE)
+        self.is_active = is_active
         self.settings = None
         self.settings_yaml = None
         self._read_settings()
@@ -20,6 +21,9 @@ class tSFModuleReader:
         return os.path.join(self.path, self.SETTINGS_FILE)
 
     def _read_settings(self):
+        if not self.is_active:
+            return
+
         settings_file = self._get_settings_file()
 
         with open(settings_file, 'r', encoding='utf-8') as f:
@@ -29,7 +33,18 @@ class tSFModuleReader:
             self.settings_yaml = yaml.safe_load(f)
 
 
-class tSF_Briefing_Reader(tSFModuleReader):
+class tSFrameworkSettingsReader(tSFModuleReader):
+    MODULES_DIR = ''
+    def __init__(self, path, is_active):
+        super().__init__(path, is_active)
+
+    def get_module_state(self, module_name):
+        module_active = self.settings_yaml[module_name]
+        print(module_active)
+        return module_active
+
+
+class tSFBriefingReader(tSFModuleReader):
     MODULE = 'Briefing'
     BRIEFING_FILE = 'tSF_briefing.sqf'
     BRIEFING_FILE_DATA = {
@@ -38,8 +53,8 @@ class tSF_Briefing_Reader(tSFModuleReader):
         "topic_end": "END"
     }
 
-    def __init__(self, path):
-        super().__init__(path)
+    def __init__(self, path, is_active):
+        super().__init__(path, is_active)
 
         raw_briefing_content, briefing_text, tags = self._parse_briefing_file()
         self.briefing_content = raw_briefing_content
@@ -47,6 +62,9 @@ class tSF_Briefing_Reader(tSFModuleReader):
         self.tags = tags
 
     def _parse_briefing_file(self):
+        if not self.is_active:
+            return None, None, None
+
         briefing_content = []
         with open(
             os.path.join(self.path, self.BRIEFING_FILE),
@@ -93,4 +111,6 @@ class tSF_Briefing_Reader(tSFModuleReader):
 
         return briefing_content, ''.join(briefing_lines), tags
 
+class tSFIntroTextReader(tSFModuleReader):
+    MODULE = 'IntroText'
 

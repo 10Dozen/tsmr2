@@ -121,7 +121,9 @@ body {
 	color:#8d8d8d!important;
 }
 
-
+#footer {
+	padding-bottom: 10%;
+}
 
 /*
 @media screen and (max-width: 1600px) {
