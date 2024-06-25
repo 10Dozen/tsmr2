@@ -1,51 +1,12 @@
 
+from .tsf_reader import tSFModuleReader
+from .tsf_handler import tSFModuleHandler
+from ..enums import PageTitle, PageStatus, InfoType, RawContentLanguage, tSFModules
+from ..data_entities import PageData, PageReviewHandler
+
 import os
-import yaml
-
-
-class tSFModuleReader:
-    FRAMEWORK_DIR = 'dzn_tSFramework'
-    MODULES_DIR = 'Modules'
-    MODULE = ''
-    SETTINGS_FILE = 'Settings.yaml'
-
-    def __init__(self, path, is_active):
-        self.path = os.path.join(path, self.FRAMEWORK_DIR,
-                                 self.MODULES_DIR, self.MODULE)
-        self.is_active = is_active
-        self.settings = None
-        self.settings_yaml = None
-        self._read_settings()
-
-    def _get_settings_file(self):
-        return os.path.join(self.path, self.SETTINGS_FILE)
-
-    def _read_settings(self):
-        if not self.is_active:
-            return
-
-        settings_file = self._get_settings_file()
-
-        with open(settings_file, 'r', encoding='utf-8') as f:
-            self.settings = f.readlines()
-
-        with open(settings_file, 'r', encoding='utf-8') as f:
-            self.settings_yaml = yaml.safe_load(f)
-
-
-class tSFrameworkSettingsReader(tSFModuleReader):
-    MODULES_DIR = ''
-    def __init__(self, path, is_active):
-        super().__init__(path, is_active)
-
-    def get_module_state(self, module_name):
-        module_active = self.settings_yaml[module_name]
-        print(module_active)
-        return module_active
-
 
 class tSFBriefingReader(tSFModuleReader):
-    MODULE = 'Briefing'
     BRIEFING_FILE = 'tSF_briefing.sqf'
     BRIEFING_FILE_DATA = {
         "tags": 'TAGS',
@@ -53,8 +14,8 @@ class tSFBriefingReader(tSFModuleReader):
         "topic_end": "END"
     }
 
-    def __init__(self, path, is_active):
-        super().__init__(path, is_active)
+    def __init__(self, path):
+        super().__init__(tSFModules.Briefing, path)
 
         raw_briefing_content, briefing_text, tags = self._parse_briefing_file()
         self.briefing_content = raw_briefing_content
@@ -62,9 +23,6 @@ class tSFBriefingReader(tSFModuleReader):
         self.tags = tags
 
     def _parse_briefing_file(self):
-        if not self.is_active:
-            return None, None, None
-
         briefing_content = []
         with open(
             os.path.join(self.path, self.BRIEFING_FILE),
@@ -111,6 +69,26 @@ class tSFBriefingReader(tSFModuleReader):
 
         return briefing_content, ''.join(briefing_lines), tags
 
-class tSFIntroTextReader(tSFModuleReader):
-    MODULE = 'IntroText'
 
+
+class tSFBriefingHandler(tSFModuleHandler):
+    TITLE = PageTitle.tSF_Briefing
+    MODULE = tSFModules.Briefing
+
+    def __init__(self, path, mission_sqm=None, dzn_gear=None):
+        super().__init__(path, mission_sqm, dzn_gear)
+        self.reader: tSFBriefingReader = tSFBriefingReader(path)
+
+    def get_page_data(self):
+        page_data: PageData = super().get_page_data()
+
+        page_data.add_info("Тэги", self.reader.tags, InfoType.MISSION_TAGS)
+        page_data.add_info("Брифинг", self.reader.briefing, InfoType.MULTILINE)
+
+        page_data.add_raw_content(
+            self.reader.BRIEFING_FILE,
+            ''.join(self.reader.briefing_content),
+            RawContentLanguage.CPP
+        )
+
+        return page_data

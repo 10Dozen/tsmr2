@@ -1,31 +1,16 @@
-from .mission_sqm_reader import MissionSqmReader
-from .tsf_reader import tSFrameworkSettingsReader, tSFBriefingReader, \
-  tSFIntroTextReader
+from .mission_sqm_handler import MissionSqmHandler
+from .dzn_gear_handler import dznGearHandler
+from .tSFHandlers import tSFrameworkSettingsReader, \
+    tSFMissionConditionsHandler, tSFBriefingHandler, \
+    tSFIntroTextHandler, tSFCCPHandler, tSFFARPHandler, \
+    tSFAuthHandler, tSFAirborneHandler, tSFArtilleryHandler, \
+    tSFERSHandler, tSFEUBHandler, tSFEVCHandler, \
+    tSFConversationsHandler, tSFACEActionsHandler, tSFAdminToolsHandler, \
+    tSFChatterHandler, tSFInteractivesHandler, tSFJIPTeleportHandler, \
+    tSFMissionDefaultsHandler, tSFNotesHandler, tSFPOMHandler, \
+    tSFSettingsHandler
 from .report_generator import ReportGenerator
-
-import os
-import sys
-from enum import Enum, StrEnum, auto
-
-
-class PageTitle(StrEnum):
-    Mission = "Миссия"
-    tSF_Briefing = "tSF / Briefing"
-    tSF_IntroText = "tSF / IntroText"
-
-    def __repr__(self):
-        return f'"{self.value}"'
-
-
-class PageStatus(StrEnum):
-    OK = auto()
-    DISABLED = auto()
-    ERROR = auto()
-    WARNING = auto()
-
-    def __repr__(self):
-        return f'"{self.value.upper()}"'
-
+from .enums import tSFModules
 
 class Reviewer:
     def __init__(self, path):
@@ -34,20 +19,44 @@ class Reviewer:
         self.tsf_settings = None
         self.tsf_briefing = None
         self.tsf_intro_text = None
+        self.tsf_mission_conditions = None
+        self.tsf_ccp = None
+        self.tsf = []
         self.reporter = None
 
     def review(self):
-        print('Review initiated')
-        self.mission_sqm = MissionSqmReader(self.path)
-        self.tsf_settings = tSFrameworkSettingsReader(self.path, True)
-        self.tsf_briefing = tSFBriefingReader(
-            self.path,
-            self.tsf_settings.get_module_state(tSFBriefingReader.MODULE)
-        )
-        self.tsf_intro_text = tSFIntroTextReader(
-            self.path,
-            self.tsf_settings.get_module_state(tSFIntroTextReader.MODULE)
-        )
+        self.mission_sqm = MissionSqmHandler(self.path)
+        self.tsf_settings = tSFrameworkSettingsReader(self.path)
+        self.dzn_gear = dznGearHandler(self.path)
+
+        self.tsf = [
+            handler(self.path, self.mission_sqm.reader, self.dzn_gear)
+            for handler 
+            in (
+                tSFBriefingHandler,
+                tSFIntroTextHandler,
+                tSFMissionConditionsHandler,
+                tSFCCPHandler,
+                tSFFARPHandler,
+                tSFAuthHandler,
+                tSFAirborneHandler,
+                tSFArtilleryHandler,
+                tSFERSHandler,
+                tSFEVCHandler,
+                tSFEUBHandler,
+                tSFNotesHandler,
+                tSFSettingsHandler,
+                tSFMissionDefaultsHandler,
+                tSFJIPTeleportHandler,
+                tSFACEActionsHandler,
+                tSFInteractivesHandler,
+                tSFConversationsHandler,
+                tSFChatterHandler,
+                tSFPOMHandler,
+                tSFAdminToolsHandler
+            )
+            if self.tsf_settings.is_module_active(handler.MODULE)
+        ]
 
         self.generate_report()
 
@@ -66,138 +75,21 @@ class Reviewer:
 
     def prepare_report_data(self):
         """Formats report data file"""
-        data = {
+        report_data = {
             "filename": self.mission_sqm.mission_filename,
             "creationData": self.mission_sqm.creation_date,
             "pages": []
         }
 
         # Mission file page
-        max_lines = 1000
-        mission_sqm_lines_omitted = len(self.mission_sqm.mission_file_content) - max_lines
-        mission_sqm_content = ''.join(
-            self.mission_sqm.mission_file_content[0:max_lines]
-        ).replace('\t', '  ')
+        report_data['pages'].append(self.mission_sqm.get_page_data().export())
 
-        data['pages'].append({
-            "name": PageTitle.Mission,
-            "status": PageStatus.OK,
-            "info": [
-                {
-                    "name": "Название",
-                    "value": self.mission_sqm.scenario_data['title']
-                },
-                {
-                    "name": "Автор",
-                    "value": self.mission_sqm.scenario_data['author']
-                },
-                {
-                    "name": "Описание",
-                    "value": self.mission_sqm.scenario_data['overview']
-                },
-                {
-                    "name": "Дата",
-                    "value": self.mission_sqm.scenario_data['date']
-                },
-                {
-                    "name": "Кол-во игроков",
-                    "value": self.mission_sqm.scenario_data['player_count']
-                },
-                {
-                    "name": "Превью",
-                    "value": self.mission_sqm.scenario_data['overview_picture']
-                },
-                {
-                    "name": "Description.ext / OVERVIEW",
-                    "value": self.mission_sqm.description_data
-                }
-            ],
-            "validation": [],
-            "issues": [],
-            "rawContent": [
-                {
-                    "filename": self.mission_sqm.OVERVIEW_IMG_FILE,
-                    "content": self.mission_sqm.OVERVIEW_IMG_FILE,
-                    "language": "image"
-                },
-                {
-                    "filename": self.mission_sqm.DESCRIPTION_EXT_FILE,
-                    "content": (
-                        ''.join(self.mission_sqm.description_ext_content)
-                          .replace('\t', '  ')
-                    ),
-                    "language": "cpp"
-                },
-                {
-                    "filename": self.mission_sqm.MISSION_FILE,
-                    "content": (
-                        mission_sqm_content +
-                        f'\n...оставшиеся {mission_sqm_lines_omitted} строк опущены'
-                    ),
-                    "language": "cpp"
-                }
-            ]
-        })
+        # dzn Gear 
+        report_data['pages'].append(self.dzn_gear.get_page_data().export())
 
-        # tSF Briefing
-        data['pages'].append({
-            "name": PageTitle.tSF_Briefing,
-            "status": PageStatus.OK,
-            "info": [
-                {
-                    "name": "Теги",
-                    "value": self.tsf_briefing.tags,
-                    "type": "missionTags"
-                },
-                {
-                    "name": "Брифинг",
-                    "value": self.tsf_briefing.briefing
-                }
-            ],
-            "validation": [],
-            "issues": [],
-            "rawContent": [
-                {
-                    "filename": self.tsf_briefing.BRIEFING_FILE,
-                    "content": ''.join(self.tsf_briefing.briefing_content),
-                    "language": "cpp"
-                },
-                {
-                    "filename": self.tsf_briefing.SETTINGS_FILE,
-                    "content": ''.join(self.tsf_briefing.settings),
-                    "language": "yaml"
-                }
-            ]
-        })
+        # TSF
+        for handler in self.tsf:
+            report_data['pages'].append(handler.get_page_data().export())
 
-        # tSF IntroText
-        data['pages'].append({
-            "name": PageTitle.tSF_IntroText,
-            "status": PageStatus.OK,
-            "info": [
-                {
-                    "name": "Дата",
-                    "value": self.tsf_intro_text.settings_yaml['Date']
-                },
-                {
-                    "name": "Локация",
-                    "value": self.tsf_intro_text.settings_yaml['Location']
-                },
-                {
-                    "name": "Операция",
-                    "value": self.tsf_intro_text.settings_yaml['Operation']
-                },
-            ],
-            "validation": [],
-            "issues": [],
-            "rawContent": [
-                {
-                    "filename": self.tsf_intro_text.SETTINGS_FILE,
-                    "content": ''.join(self.tsf_intro_text.settings),
-                    "language": "yaml"
-                }
-            ]
-        })
-
-        return data
+        return report_data
 

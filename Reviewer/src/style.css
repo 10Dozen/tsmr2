@@ -90,7 +90,7 @@ body {
 
 #navbar ul li {
 	cursor: pointer;
-	padding: 18px;
+	padding: 10px;
 	border: none;
 	text-align: left;
 	outline: none;
@@ -205,11 +205,12 @@ body {
 
 .info-title {
 	font-weight: 600;
+	padding-bottom: 6px;
 }
 
 .info-value {
 	font-size: 18px;
-	padding-left: 10px;
+	padding-left: 32px;
 }
 
 .info-value-list {

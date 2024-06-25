@@ -29,13 +29,21 @@ class MissionSqmReader:
         self.desc_src = os.path.join(path, self.DESCRIPTION_EXT_FILE)
         self.overview_img_src = os.path.join(path, self.OVERVIEW_IMG_FILE)
 
-        assert os.path.exists(self.src)
-        assert os.path.exists(self.desc_src)
+        assert os.path.exists(self.src), self.src
+        assert os.path.exists(self.desc_src), self.desc_src
 
         self.mission_filename = os.path.basename(path)
         with open(self.src, 'r', encoding='utf-8') as f:
             self.mission_file_content = f.readlines()
-        self.scenario_data = self.get_scenario_data()
+        
+        self.title = None
+        self.author = None
+        self.overview = None
+        self.overview_picture = None
+        self.date = None
+        self.player_count = None
+
+        self.get_scenario_data()
 
         with open(self.desc_src, 'r', encoding='utf-8') as f:
             self.description_ext_content = f.readlines()
@@ -46,21 +54,10 @@ class MissionSqmReader:
             localtime(os.path.getmtime(self.src))
         )
 
-        print(self.mission_filename)
-        print(self.scenario_data)
-        print(self.description_data)
-        print(self.creation_date)
+        print(f"{self.title} {self.author} {self.overview}")
 
     def get_scenario_data(self):
         '''Reads scenario data'''
-        scenario_data = {
-            'title': '',
-            'author': '',
-            'overview': '',
-            'overview_picture': '',
-            'date': '',
-            'player_count': ''
-        }
         # player_count_mission_name = 0
         player_count_in_mission_name_pattern = re.compile(r'^([a-zA-Z]+)(\d+)')
         year = ''
@@ -81,22 +78,22 @@ class MissionSqmReader:
 
             line_value = line.rsplit("=", maxsplit=1)[1].strip().strip(';"')
             if line_to_test.startswith(self.MISSION_FILE_DATA['title']):
-                scenario_data['title'] = line_value
+                self.title = line_value
                 mission_name_regex = player_count_in_mission_name_pattern.search(line_value)
                 if mission_name_regex:
-                    scenario_data['player_count'] = int(mission_name_regex.group(2))
+                    self.player_count = int(mission_name_regex.group(2))
                 continue
 
             if line_to_test.startswith(self.MISSION_FILE_DATA['author']):
-                scenario_data['author'] = line_value
+                self.author = line_value
                 continue
 
             if line_to_test.startswith(self.MISSION_FILE_DATA['overview_picture']):
-                scenario_data['overview_picture'] = line_value
+                self.overview_picture = line_value
                 continue
 
             if line_to_test.startswith(self.MISSION_FILE_DATA['overview']):
-                scenario_data['overview'] = line_value
+                self.overview = line_value
                 continue
 
             if line_to_test.startswith(self.MISSION_FILE_DATA['year']):
@@ -113,16 +110,14 @@ class MissionSqmReader:
 
         if year:
             if not month or not day:
-                scenario_data['date'] = f'{year}'
+                self.date = f'{year}'
             else:
                 if len(month) == 1:
                     month = f'0{month}'
                 if len(day) == 1:
                     day = f'0{day}'
-                scenario_data['date'] = f'{year}-{month}-{day}'
-
-        return scenario_data
-
+                self.date = f'{year}-{month}-{day}'
+   
     def get_description_ext_data(self):
         overview_prefix = self.DESCRIPTION_EXT_FILE_DATA['overview']
         prefix_offset = len(overview_prefix)

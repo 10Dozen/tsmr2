@@ -110,7 +110,7 @@ class App {
     renderFields() {
         console.log('RenderFields')
         if (this.page.info.length == 0) {
-            $(this.$selectors.info.block).html('')
+            $(this.$selectors.info.elements).html('')
             $(this.$selectors.info.block).css("display", "none")
             return
         }
@@ -156,7 +156,7 @@ class App {
             return elLines.join('')
         })
         $(this.$selectors.info.elements).html(elements.join(''))
-        $(this.$selectors.info.block).css("display", null)
+        $(this.$selectors.info.block).css("display", "unset")
     }
 
     renderFileContent() {
