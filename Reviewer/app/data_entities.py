@@ -2,11 +2,10 @@
 from .enums import PageStatus, InfoType
 
 class InfoValue:
-    def __init__(self, title, value, type=InfoType.PLAIN):
+    def __init__(self, title, value, type):
         self.title = title
         self.value = value 
-        
-        self.type = type
+        self.type = type if type else InfoType.PLAIN
     
     def export(self):
         return {

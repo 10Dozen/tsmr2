@@ -72,23 +72,37 @@ HTML_BODY = """
 class ReportGenerator:
     """Creates HTML report
     """
-
     SRC_DIR = "src"
     REPORT_HTML = "Report.html"
     DATA_JS = "data.js"
     DATA_JS_PREFIX = 'const MissionReviewData = '
 
-    def __init__(self, mission_name, mission_creation_date):
+    def __init__(self):
         self.app_dir = os.path.split(os.path.dirname(__file__))[0]
+        self.report_dir =  None 
+        self.report_src_dir = None
+        self.overview_img_path = None
+        self.content = None
+
+    def set_report_data(self, mission_name, mission_creation_date, overview_img_path, pages):
         self.report_dir = "_".join([
             "Report",
             mission_name,
             mission_creation_date
-        ]).replace(":", "-")
+        ]).replace(":", "-") 
         self.report_src_dir = os.path.join(self.report_dir, self.SRC_DIR)
+        self.overview_img_path = overview_img_path
 
-    def create_report(self, report_content: str | dict,
-                      overview_img_path: str):
+        self.content = {
+            "filename": mission_name,
+            "creationData": mission_creation_date,
+            "pages": [
+                page_handler.get_page_data().export()
+                for page_handler in pages
+            ]
+        }
+
+    def create_report(self):
         """Creates report directory and files
 
         Args:
@@ -97,8 +111,8 @@ class ReportGenerator:
         """
         self._create_report_dir()
         self._create_report_file()
-        self._create_data_file(report_content)
-        self._copy_overview_img(overview_img_path)
+        self._create_data_file()
+        self._copy_overview_img()
 
     def _create_report_dir(self):
         if os.path.exists(self.report_dir):
@@ -125,15 +139,15 @@ class ReportGenerator:
         with open(report_file, 'w', encoding='utf-8') as f:
             f.write(content)
 
-    def _create_data_file(self, content):
+    def _create_data_file(self):
         data_js_filename = os.path.join(self.report_src_dir, self.DATA_JS)
         with open(data_js_filename, 'w', encoding='utf-8') as f:
             f.write(self.DATA_JS_PREFIX)
-            f.write(str(content))
+            f.write(str(self.content))
 
-    def _copy_overview_img(self, overview_img_path):
-        base_name = os.path.basename(overview_img_path)
+    def _copy_overview_img(self):
+        base_name = os.path.basename(self.overview_img_path)
         shutil.copyfile(
-            overview_img_path,
+            self.overview_img_path,
             os.path.join(self.report_dir, base_name)
         )

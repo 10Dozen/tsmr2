@@ -72,6 +72,7 @@ class InfoType(StrEnum):
     PLAIN = 'plain'
     MULTILINE = 'multiline'
     MISSION_TAGS = 'missionTags'
+    DYNAI_ZONES = 'dynaiZones'
 
     def __repr__(self):
         return f'"{self.value}"'

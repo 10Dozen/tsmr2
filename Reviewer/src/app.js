@@ -5,6 +5,13 @@ const PageStateStyle = {
     DISABLED: "navbar-page-disabled"
 }
 
+const InfoFieldsTypes = {
+    Plain: 'plain',
+    Multiline: 'multiline',
+    MissionTags: 'missionTags',
+    DynaiZones: 'dynaiZones'
+}
+
 const TagsMarkdown = {
 	"SPECOPS": { 		bg: "#8ab62f", text: "whitesmoke", "tooltip": "Спец. операция силами небольшой группы спецназа" },
 	"INFANTRY": {		bg: "#ba2b2b", text: "whitesmoke", "tooltip": "Пехотная операция силами стрелковых или моторизированных подразделений" },
@@ -20,7 +27,6 @@ const TagsMarkdown = {
 	"FIX NEEDED": {		bg: "#dddd11", text: "#333333",    "tooltip": "Сломано! Пишите в СпортЛото!" },
 	"default": { 		bg: "#8374aa", text: "whitesmoke", "tooltip": "" }
 };
-
 
 A = 0
 
@@ -117,7 +123,10 @@ class App {
 
         const elements = this.page.info.map(info => {
             // Normal string rendering
-            if (typeof info.value != 'object') {
+            console.log("Info ELements Rendering ")
+            console.log(info)
+            console.log(info.type)
+            if (info.type == InfoFieldsTypes.Plain) {
                 return ([
                     '<div class="info-line">',
                     '<div class="info-title">' + info.name + '</div>',
@@ -132,10 +141,11 @@ class App {
                 '<div class="info-title">', info.name, '</div>'
             ]
 
+            console.log(info.value)
             info.value.forEach(el => {
-                if (info.type == 'missionTags') {
+                console.log(el)
+                if (info.type == InfoFieldsTypes.MissionTags) {
                     // Formatting of tags
-                    console.log(el)
                     let md = TagsMarkdown[el]
                     if (!md) {
                         md = TagsMarkdown.default
@@ -147,14 +157,31 @@ class App {
                         + `[${el}] ${md.tooltip}`
                         + '</div>'
                     )
-                } else {
-                    // Simple multiline
-                    elLines.push('<div class="info-value info-value-list">' + el + '</div>')
+                    return
+                } 
+
+                if (info.type == InfoFieldsTypes.DynaiZones) {
+                    const name = el[0]
+                    const side = el[1]
+                    const isActive = el[2]
+
+                    // TODO: Styling
+                    elLines.push(
+                        '<div class="info-value info-value-list">'
+                        + `${name} ${side} ${isActive}`
+                        + '</div>'
+                    )
+                    return
                 }
+                
+                // Simple multiline
+                elLines.push('<div class="info-value info-value-list">' + el + '</div>')
             })
             elLines.push('</div>')
+
             return elLines.join('')
         })
+
         $(this.$selectors.info.elements).html(elements.join(''))
         $(this.$selectors.info.block).css("display", "unset")
     }

@@ -83,7 +83,7 @@ class tSFBriefingHandler(tSFModuleHandler):
         page_data: PageData = super().get_page_data()
 
         page_data.add_info("Тэги", self.reader.tags, InfoType.MISSION_TAGS)
-        page_data.add_info("Брифинг", self.reader.briefing, InfoType.MULTILINE)
+        page_data.add_info("Брифинг", self.reader.briefing)
 
         page_data.add_raw_content(
             self.reader.BRIEFING_FILE,
