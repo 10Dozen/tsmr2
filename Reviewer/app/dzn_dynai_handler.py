@@ -1,10 +1,11 @@
-from .enums import PageTitle, PageStatus, RawContentLanguage, InfoType
+from .enums import PageTitle, Component, RawContentLanguage, InfoType
 from .dzn_dynai_reader import dznDynaiReader
 from .entities import PageData, PageReviewHandler
 
 
 class dznDynaiHandler(PageReviewHandler):
     TITLE = PageTitle.dzn_dynai
+    COMPONENT = Component.dznDynai
 
     def __init__(self, path):
         self.reader = dznDynaiReader(path)

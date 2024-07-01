@@ -1,10 +1,11 @@
-from .enums import PageTitle, PageStatus, RawContentLanguage, InfoType
+from .enums import PageTitle, RawContentLanguage, InfoType, Component
 from .mission_sqm_reader import MissionSqmReader
 from .entities import PageData, PageReviewHandler
 
 
 class MissionSqmHandler(PageReviewHandler):
     TITLE = PageTitle.Mission
+    COMPONENT = Component.Mission
     SQM_MAX_LINES = 1000
 
     def __init__(self, path):

@@ -53,12 +53,17 @@ class TestResult:
         return str(self.export())
     
     def export(self) -> dict:
-        return {
-            "name": self.name,
-            "type": self.severity,
-            "message": self.message,
-            "data": self.extra_data
-        }
+        output = [
+            f'Компонент "{self.relates_to.upper()}"',
+            f'Рекомендации:',
+            f'  {self.message}'
+        ]
+        if self.extra_data:
+            output.append('')
+            output.append(f'Доп. информация:')
+            output.append(f'  {self.extra_data}')
+            
+        return "\n".join(output)
     
 
 class PageData:
@@ -89,6 +94,7 @@ class PageData:
 
 class PageReviewHandler:
     TITLE = ""
+    COMPONENT = ""
 
     def __init__(self, path):
         self.path = path

@@ -1,7 +1,7 @@
 from .mission_sqm_handler import MissionSqmHandler
 from .dzn_gear_handler import dznGearHandler
 from .dzn_dynai_handler import dznDynaiHandler
-from .tSFHandlers import tSFrameworkSettingsReader, \
+from .tSFModulesHandlers import tSFrameworkSettingsHandler, \
     tSFMissionConditionsHandler, tSFBriefingHandler, \
     tSFIntroTextHandler, tSFCCPHandler, tSFFARPHandler, \
     tSFAuthHandler, tSFAirborneHandler, tSFArtilleryHandler, \
@@ -32,7 +32,7 @@ class Reviewer:
 
     def review(self):
         self.mission_sqm = MissionSqmHandler(self.path)
-        self.tsf_settings = tSFrameworkSettingsReader(self.path)
+        self.tsf_settings = tSFrameworkSettingsHandler(self.path)
         self.dzn_gear = dznGearHandler(self.path)
         self.dzn_dynai = dznDynaiHandler(self.path)
         
@@ -62,22 +62,19 @@ class Reviewer:
                 tSFPOMHandler,
                 tSFAdminToolsHandler
             )
-            if self.tsf_settings.is_module_active(handler.MODULE)
+            if self.tsf_settings.is_module_active(handler.COMPONENT)
         ]
 
         self.tester = Tester(self.path)
-        self.tester.register_components({
-            Component.Mission: self.mission_sqm.reader,
-            Component.dznGear: self.dzn_gear.reader,
-            Component.dznDynai: self.dzn_dynai.reader,
-            Component.tSF: self.tsf_settings
-        })
-        _ = [self.tester.register_component(h.MODULE, h.reader) for h in self.tsf]
+        self.tester.register_components([
+            self.mission_sqm,
+            self.dzn_gear,
+            self.dzn_dynai,
+            self.tsf_settings
+        ])
+        self.tester.register_components(self.tsf)
 
         self.tester.run_tests()
-        print(self.tester)
-        print(dir(self.tester))
-        print(self.tester.__dict__)
 
         self.generate_report()
 
@@ -88,11 +85,11 @@ class Reviewer:
             self.mission_sqm,
             self.dzn_gear,
             self.dzn_dynai,
+            self.tsf_settings,
             self.tester
         ]
         for handler in self.tsf:
             pages.append(handler)
-
 
         self.reporter = ReportGenerator()
         self.reporter.set_report_data(

@@ -37,6 +37,7 @@ class PageTitle(StrEnum):
     Mission = "Миссия"
     dzn_gear = "dzn_Gear"
     dzn_dynai = "dzn_Dynai"
+    tSF = "tSF"
 
     tSF_Briefing = f"tSF / {Component.Briefing}"
     tSF_IntroText = f"tSF / {Component.IntroText}"
@@ -90,6 +91,7 @@ class RawContentLanguage(StrEnum):
     IMAGE = 'image'
     CPP = 'cpp'
     YAML = 'yaml'
+    SQF = 'sqf'
 
     def __repr__(self):
         return f'"{self.value}"'
