@@ -10,21 +10,22 @@ from .tSFHandlers import tSFrameworkSettingsReader, \
     tSFChatterHandler, tSFInteractivesHandler, tSFJIPTeleportHandler, \
     tSFMissionDefaultsHandler, tSFNotesHandler, tSFPOMHandler, \
     tSFSettingsHandler
+from .tester import Tester
 from .report_generator import ReportGenerator
-from .data_entities import PageReviewHandler
+from .entities import PageReviewHandler
+from .enums import Component
+
 
 class Reviewer:
     def __init__(self, path):
         self.path = path
+
         self.mission_sqm = None
         self.dzn_gear = None 
         self.dzn_dynai = None
         self.tsf_settings = None
-        self.tsf_briefing = None
-        self.tsf_intro_text = None
-        self.tsf_mission_conditions = None
-        self.tsf_ccp = None
         self.tsf = []
+        self.tester = None
 
         self.report_data = {}
         self.reporter = None
@@ -34,9 +35,9 @@ class Reviewer:
         self.tsf_settings = tSFrameworkSettingsReader(self.path)
         self.dzn_gear = dznGearHandler(self.path)
         self.dzn_dynai = dznDynaiHandler(self.path)
-
+        
         self.tsf = [
-            handler(self.path, self.mission_sqm.reader, self.dzn_gear)
+            handler(self.path, self.mission_sqm.reader)
             for handler 
             in (
                 tSFBriefingHandler,
@@ -64,14 +65,30 @@ class Reviewer:
             if self.tsf_settings.is_module_active(handler.MODULE)
         ]
 
+        self.tester = Tester(self.path)
+        self.tester.register_components({
+            Component.Mission: self.mission_sqm.reader,
+            Component.dznGear: self.dzn_gear.reader,
+            Component.dznDynai: self.dzn_dynai.reader,
+            Component.tSF: self.tsf_settings
+        })
+        _ = [self.tester.register_component(h.MODULE, h.reader) for h in self.tsf]
+
+        self.tester.run_tests()
+        print(self.tester)
+        print(dir(self.tester))
+        print(self.tester.__dict__)
+
         self.generate_report()
+
 
     def generate_report(self):
         """Creates report from the read data"""
         pages = [
             self.mission_sqm,
             self.dzn_gear,
-            self.dzn_dynai
+            self.dzn_dynai,
+            self.tester
         ]
         for handler in self.tsf:
             pages.append(handler)

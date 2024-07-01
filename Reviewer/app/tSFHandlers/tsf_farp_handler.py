@@ -1,19 +1,19 @@
 
-from ..enums import PageStatus, PageTitle, RawContentLanguage, tSFModules
-from ..data_entities import  PageData
+from ..enums import PageStatus, PageTitle, RawContentLanguage, Component
+from ..entities import  PageData
 from .tsf_reader import tSFModuleSQFReader
 from .tsf_handler import tSFModuleHandler
 
 
 class tSFFARPHandler(tSFModuleHandler):
     TITLE = PageTitle.tSF_FARP
-    MODULE = tSFModules.FARP
+    MODULE = Component.FARP
 
     SQM_PATTERN = 'name="tSF_FARP";'.lower()
     SQM_COMPOSITION = 'init="tSF_FARP_Composition = ""'.lower()
 
-    def __init__(self, path, mission_sqm=None, dzn_gear=None):
-        super().__init__(path, mission_sqm, dzn_gear)
+    def __init__(self, path, mission_sqm=None):
+        super().__init__(path, mission_sqm)
         self.reader = tSFModuleSQFReader(self.MODULE, path)
 
         self.module_set = False 

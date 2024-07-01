@@ -1,6 +1,6 @@
 from .enums import PageTitle, PageStatus, RawContentLanguage, InfoType
 from .dzn_gear_reader import dznGearReader
-from .data_entities import PageData, PageReviewHandler
+from .entities import PageData, PageReviewHandler
 
 
 class dznGearHandler(PageReviewHandler):

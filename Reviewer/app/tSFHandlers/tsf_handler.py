@@ -1,4 +1,4 @@
-from ..data_entities import PageReviewHandler
+from ..entities import PageReviewHandler
 from ..mission_sqm_reader import MissionSqmReader
 from ..enums import RawContentLanguage
 from .tsf_reader import tSFModuleReader

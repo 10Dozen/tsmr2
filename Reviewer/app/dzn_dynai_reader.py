@@ -1,8 +1,8 @@
-
+from .entities import DataReader
 import os
-import re
 
-class dznDynaiReader:
+
+class dznDynaiReader(DataReader):
     SUBDIR = 'dzn_dynai'
     INIT_FILE = 'dzn_dynai_init.sqf'
     SETTINGS_FILE = 'Settings.sqf'

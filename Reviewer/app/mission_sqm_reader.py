@@ -1,10 +1,11 @@
+from .entities import DataReader
 from time import strftime, localtime
 
 import os
 import re
 
 
-class MissionSqmReader:
+class MissionSqmReader(DataReader):
     MISSION_FILE = 'mission.sqm'
     DESCRIPTION_EXT_FILE = 'description.ext'
     OVERVIEW_IMG_FILE = 'overview.jpg'
@@ -32,21 +33,19 @@ class MissionSqmReader:
         assert os.path.exists(self.src), self.src
         assert os.path.exists(self.desc_src), self.desc_src
 
+        self.mission_file_content = None
+        self.description_ext_content = None 
+        self._read_files()
+
         self.mission_filename = os.path.basename(path)
-        with open(self.src, 'r', encoding='utf-8') as f:
-            self.mission_file_content = f.readlines()
-        
         self.title = None
         self.author = None
         self.overview = None
         self.overview_picture = None
         self.date = None
         self.player_count = None
-
         self.get_scenario_data()
-
-        with open(self.desc_src, 'r', encoding='utf-8') as f:
-            self.description_ext_content = f.readlines()
+        
         self.description_data = self.get_description_ext_data()
 
         self.creation_date = strftime(
@@ -55,6 +54,10 @@ class MissionSqmReader:
         )
 
         print(f"{self.title} {self.author} {self.overview}")
+
+    def _read_files(self):
+        self.mission_file_content = DataReader._read_file(self.src)
+        self.description_ext_content = DataReader._read_file(self.desc_src)            
 
     def get_scenario_data(self):
         '''Reads scenario data'''

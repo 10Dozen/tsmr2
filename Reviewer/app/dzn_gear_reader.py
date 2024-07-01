@@ -1,8 +1,8 @@
-
+from .entities import DataReader
 import os
-import re
 
-class dznGearReader:
+
+class dznGearReader(DataReader):
     SUBDIR = 'dzn_gear'
     INIT_FILE = 'dzn_gear_init.sqf'
     SETTINGS_FILE = 'Settings.sqf'

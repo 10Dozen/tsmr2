@@ -1,7 +1,12 @@
 from enum import StrEnum, auto
 
 
-class tSFModules(StrEnum):
+class Component(StrEnum):
+    Mission = auto()
+    dznGear = auto()
+    dznDynai = auto()
+    tSF = auto()
+
     Briefing = 'Briefing'
     IntroText = 'IntroText'
     MissionConditions = 'MissionConditions'
@@ -32,27 +37,30 @@ class PageTitle(StrEnum):
     Mission = "Миссия"
     dzn_gear = "dzn_Gear"
     dzn_dynai = "dzn_Dynai"
-    tSF_Briefing = f"tSF / {tSFModules.Briefing}"
-    tSF_IntroText = f"tSF / {tSFModules.IntroText}"
-    tSF_MissionConditions = f"tSF / {tSFModules.MissionConditions}"
-    tSF_CCP = f"tSF / {tSFModules.CCP}"
-    tSF_FARP = f"tSF / {tSFModules.FARP}"
-    tSF_Authorization = f"tSF / {tSFModules.Authorization}"
-    tSF_AirborneSupport = f"tSF / {tSFModules.AirborneSupport}"
-    tSF_ArtillerySupport = f"tSF / {tSFModules.ArtillerySupport}"
-    tSF_EditorRadioSettings = f"tSF / {tSFModules.EditorRadioSettings}"
-    tSF_EditorUnitBehavior = f"tSF / {tSFModules.EditorUnitBehavior}"
-    tSF_EditorVehicleCrew = f"tSF / {tSFModules.EditorVehicleCrew}"
-    tSF_tSNotes = f"tSF / {tSFModules.tSNotes}"
-    tSF_tSSettings = f"tSF / {tSFModules.tSSettings}"
-    tSF_MissionDefaults = f"tSF / {tSFModules.MissionDefaults}"
-    tSF_JIPTeleport = f"tSF / {tSFModules.JIPTeleport}"
-    tSF_ACEActions = f"tSF / {tSFModules.ACEActions}"
-    tSF_Interactives = f"tSF / {tSFModules.Interactives}"
-    tSF_Conversations = f"tSF / {tSFModules.Conversations}"
-    tSF_Chatter = f"tSF / {tSFModules.Chatter}"
-    tSF_POM = f"tSF / {tSFModules.POM}"
-    tSF_tSAdminTools = f"tSF / {tSFModules.tSAdminTools}"
+
+    tSF_Briefing = f"tSF / {Component.Briefing}"
+    tSF_IntroText = f"tSF / {Component.IntroText}"
+    tSF_MissionConditions = f"tSF / {Component.MissionConditions}"
+    tSF_CCP = f"tSF / {Component.CCP}"
+    tSF_FARP = f"tSF / {Component.FARP}"
+    tSF_Authorization = f"tSF / {Component.Authorization}"
+    tSF_AirborneSupport = f"tSF / {Component.AirborneSupport}"
+    tSF_ArtillerySupport = f"tSF / {Component.ArtillerySupport}"
+    tSF_EditorRadioSettings = f"tSF / {Component.EditorRadioSettings}"
+    tSF_EditorUnitBehavior = f"tSF / {Component.EditorUnitBehavior}"
+    tSF_EditorVehicleCrew = f"tSF / {Component.EditorVehicleCrew}"
+    tSF_tSNotes = f"tSF / {Component.tSNotes}"
+    tSF_tSSettings = f"tSF / {Component.tSSettings}"
+    tSF_MissionDefaults = f"tSF / {Component.MissionDefaults}"
+    tSF_JIPTeleport = f"tSF / {Component.JIPTeleport}"
+    tSF_ACEActions = f"tSF / {Component.ACEActions}"
+    tSF_Interactives = f"tSF / {Component.Interactives}"
+    tSF_Conversations = f"tSF / {Component.Conversations}"
+    tSF_Chatter = f"tSF / {Component.Chatter}"
+    tSF_POM = f"tSF / {Component.POM}"
+    tSF_tSAdminTools = f"tSF / {Component.tSAdminTools}"
+
+    Tests = "Проверки"
 
     def __repr__(self):
         return f'"{self.value}"'
@@ -85,3 +93,12 @@ class RawContentLanguage(StrEnum):
 
     def __repr__(self):
         return f'"{self.value}"'
+    
+
+class Severity(StrEnum):
+    ERROR = auto()
+    WARNING = auto()
+    NOTICE = auto()
+
+    def __repr__(self):
+        return f'"{self.value.upper()}"'

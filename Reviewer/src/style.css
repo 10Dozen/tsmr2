@@ -73,6 +73,7 @@ body {
 	width: 12%;
 	height: 100%;
 	background-color: #252525;
+	overflow: auto;
 }
 
 #wrapper {
@@ -223,4 +224,10 @@ body {
 	margin: 1px;
 	border-radius: 7px;
 	text-align: center;
+}
+
+.info-value-dynai-zone > span {
+	color: #ffffff;
+    padding: 3px;
+    border-radius: 6px;
 }

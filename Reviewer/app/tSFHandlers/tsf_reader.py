@@ -1,4 +1,4 @@
-
+from ..entities import DataReader
 import os
 import yaml
 # from yaml import parser, safe_load
@@ -23,9 +23,7 @@ class tSFModuleReader:
 
     def _read_settings(self):
         settings_file = self._get_settings_file()
-
-        with open(settings_file, 'r', encoding='utf-8') as f:
-            self.settings = f.readlines()
+        self.settings = DataReader._read_file(settings_file)
 
         with open(settings_file, 'r', encoding='utf-8') as f:
             try:
@@ -39,9 +37,7 @@ class tSFModuleSQFReader(tSFModuleReader):
 
     def _read_settings(self):
         settings_file = self._get_settings_file()
-
-        with open(settings_file, 'r', encoding='utf-8') as f:
-            self.settings = f.readlines()
+        self.settings = DataReader._read_file(settings_file)
 
 
 class tSFrameworkSettingsReader(tSFModuleReader):

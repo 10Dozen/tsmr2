@@ -1,8 +1,8 @@
 
 from .tsf_reader import tSFModuleReader
 from .tsf_handler import tSFModuleHandler
-from ..enums import PageTitle, PageStatus, InfoType, RawContentLanguage, tSFModules
-from ..data_entities import PageData, PageReviewHandler
+from ..enums import PageTitle, PageStatus, InfoType, RawContentLanguage, Component
+from ..entities import PageData, PageReviewHandler
 
 import os
 
@@ -15,7 +15,7 @@ class tSFBriefingReader(tSFModuleReader):
     }
 
     def __init__(self, path):
-        super().__init__(tSFModules.Briefing, path)
+        super().__init__(Component.Briefing, path)
 
         raw_briefing_content, briefing_text, tags = self._parse_briefing_file()
         self.briefing_content = raw_briefing_content
@@ -73,7 +73,7 @@ class tSFBriefingReader(tSFModuleReader):
 
 class tSFBriefingHandler(tSFModuleHandler):
     TITLE = PageTitle.tSF_Briefing
-    MODULE = tSFModules.Briefing
+    MODULE = Component.Briefing
 
     def __init__(self, path, mission_sqm=None, dzn_gear=None):
         super().__init__(path, mission_sqm, dzn_gear)

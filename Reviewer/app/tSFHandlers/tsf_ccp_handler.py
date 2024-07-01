@@ -1,13 +1,13 @@
 
-from ..enums import PageStatus, PageTitle, RawContentLanguage, tSFModules
-from ..data_entities import PageReviewHandler, PageData
+from ..enums import PageStatus, PageTitle, RawContentLanguage, Component
+from ..entities import PageReviewHandler, PageData
 from .tsf_reader import tSFModuleSQFReader
 from .tsf_handler import tSFModuleHandler
 
 
 class tSFCCPHandler(tSFModuleHandler):
     TITLE = PageTitle.tSF_CCP
-    MODULE = tSFModules.CCP
+    MODULE = Component.CCP
 
     SQM_PATTERN = 'name="tSF_CCP";'.lower()
     SQM_COMPOSITION = 'init="tSF_CCP_Composition = ""'.lower()

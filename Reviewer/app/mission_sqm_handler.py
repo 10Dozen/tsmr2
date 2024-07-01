@@ -1,6 +1,6 @@
-from .enums import PageTitle, PageStatus, RawContentLanguage
+from .enums import PageTitle, PageStatus, RawContentLanguage, InfoType
 from .mission_sqm_reader import MissionSqmReader
-from .data_entities import PageData, PageReviewHandler
+from .entities import PageData, PageReviewHandler
 
 
 class MissionSqmHandler(PageReviewHandler):
@@ -14,6 +14,7 @@ class MissionSqmHandler(PageReviewHandler):
         self.creation_date = self.reader.creation_date
         self.overview_img_src = self.reader.overview_img_src
 
+
     def get_page_data(self):
         page_data: PageData = super().get_page_data()
 
@@ -23,7 +24,11 @@ class MissionSqmHandler(PageReviewHandler):
         page_data.add_info("Дата", self.reader.date)
         page_data.add_info("Кол-во игроков", self.reader.player_count)
         page_data.add_info("Превью", self.reader.overview_picture)
-        page_data.add_info("Description.ext / OVERVIEW", self.reader.description_data)
+        page_data.add_info(
+            "Description.ext / OVERVIEW", 
+            self.reader.description_data, 
+            InfoType.MULTILINE
+        )
 
         mission_sqm_lines_omitted = len(self.reader.mission_file_content) - self.SQM_MAX_LINES
         mission_sqm_content = ''.join(

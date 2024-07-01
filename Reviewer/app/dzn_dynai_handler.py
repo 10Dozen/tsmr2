@@ -1,6 +1,6 @@
 from .enums import PageTitle, PageStatus, RawContentLanguage, InfoType
 from .dzn_dynai_reader import dznDynaiReader
-from .data_entities import PageData, PageReviewHandler
+from .entities import PageData, PageReviewHandler
 
 
 class dznDynaiHandler(PageReviewHandler):
@@ -8,6 +8,7 @@ class dznDynaiHandler(PageReviewHandler):
 
     def __init__(self, path):
         self.reader = dznDynaiReader(path)
+
 
     def get_page_data(self):
         page_data: PageData = super().get_page_data()
@@ -18,7 +19,7 @@ class dznDynaiHandler(PageReviewHandler):
         sides = set([z[1] for z in self.reader.zones])
         for side in sides:
             zones_per_side[side] = len([z for z in self.reader.zones if z[1] == side])
-        active_zones = len([z for z in self.reader.zones if z[2]])
+        active_zones = len([z for z in self.reader.zones if z[2] == 'true'])
 
         page_data.add_info(
             "Кол-во зон", 

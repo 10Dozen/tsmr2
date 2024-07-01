@@ -1,13 +1,13 @@
 
-from ..enums import PageStatus, PageTitle, RawContentLanguage, tSFModules
-from ..data_entities import PageReviewHandler, PageData
+from ..enums import PageStatus, PageTitle, RawContentLanguage, Component
+from ..entities import PageReviewHandler, PageData
 from .tsf_reader import tSFModuleReader
 from .tsf_handler import tSFModuleHandler
 
 
 class tSFIntroTextHandler(tSFModuleHandler):
     TITLE = PageTitle.tSF_IntroText
-    MODULE = tSFModules.IntroText
+    MODULE = Component.IntroText
     VALIDATOR = ""
 
     def __init__(self, path, mission_sqm=None, dzn_gear=None):
