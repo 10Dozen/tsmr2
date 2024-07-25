@@ -29,7 +29,6 @@ class tSFrameworkSettingsReader(tSFModuleReader):
             for line in f.readlines():
                 if line.startswith(self.VERSION_PATTERN):                    
                     self.version = line.rsplit(' ')[-1].strip()[1:-1]
-                    print(self.version)
                     break
 
     

@@ -29,7 +29,7 @@ class tSFModuleReader(DataReader):
             try:
                 self.settings_yaml = yaml.safe_load(f)
             except yaml.parser.ParserError:
-                print(f"[Reader-{self.module}]Failed to parse SFML (not a YAML-compatible syntax)")
+                print(f"[Reader-{self.module}] Failed to parse SFML (not a YAML-compatible syntax)")
 
 
 class tSFModuleSQFReader(tSFModuleReader):

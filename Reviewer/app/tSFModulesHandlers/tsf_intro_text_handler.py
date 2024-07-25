@@ -17,7 +17,12 @@ class tSFIntroTextHandler(tSFModuleHandler):
     def get_page_data(self):
         page_data: PageData = super().get_page_data()
         
-        page_data.add_info("Дата", self.reader.settings_yaml.get("Date"))
+        page_data.add_info(
+            "Дата", 
+            "<дата из редактора - %1/%2/%3>" 
+            if self.reader.settings_yaml.get("Date") == '%1/%2/%3' else 
+            self.reader.settings_yaml.get("Date")
+        )
         page_data.add_info("Локация", self.reader.settings_yaml.get("Location"))
         page_data.add_info("Операция", self.reader.settings_yaml.get("Operation"))
 

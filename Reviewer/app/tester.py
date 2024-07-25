@@ -100,8 +100,8 @@ class Tester(PageReviewHandler):
 
     @tests(Component.Mission)
     @meta("SQM-002", "Имя миссии соответсвует шаблону", Severity.WARNING,
-          """Переименуйте миссию (в редакторе и саму папку миссии), чтобы имя соответствовало шаблону - 
-             Тип + Кол-во слотов + Имя миссии + Версия (например, CO11 Mission Name (1A))""")
+          "Переименуйте миссию (в редакторе и саму папку миссии), чтобы имя соответствовало шаблону - \n"
+          "Тип + Кол-во слотов + Имя миссии + Версия (например, CO11 Mission Name (1A))")
     def test_sqm002(self):
         sqm: MissionSqmReader = self.get_component(Component.Mission)
         title = sqm.title

@@ -117,6 +117,8 @@ class ReportGenerator:
     def _create_report_dir(self):
         if os.path.exists(self.report_dir):
             shutil.rmtree(self.report_dir)
+        
+        print(f'Creating report at {os.path.join(self.report_src_dir,self.report_dir)}')
 
         os.mkdir(self.report_dir)
         src_dir = os.path.join(self.app_dir, self.SRC_DIR)

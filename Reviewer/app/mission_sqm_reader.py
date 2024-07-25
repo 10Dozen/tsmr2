@@ -38,12 +38,12 @@ class MissionSqmReader(DataReader):
         self._read_files()
 
         self.mission_filename = os.path.basename(path)
-        self.title = None
-        self.author = None
-        self.overview = None
-        self.overview_picture = None
-        self.date = None
-        self.player_count = None
+        self.title = ''
+        self.author = ''
+        self.overview = ''
+        self.overview_picture = ''
+        self.date = ''
+        self.player_count = 0
         self.get_scenario_data()
         
         self.description_data = self.get_description_ext_data()
