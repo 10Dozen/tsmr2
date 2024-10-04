@@ -1,5 +1,3 @@
-
-
 from ..enums import PageTitle, Component
 from .tsf_module_reader import tSFModuleSQFReader
 from .tsf_module_handler import tSFModuleHandler

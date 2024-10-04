@@ -26,6 +26,8 @@ class Component(StrEnum):
     Interactives = 'Interactives'
     Conversations = 'Conversations'
     Chatter = 'Chatter'
+    CrewOptions = 'CrewOptions'
+    Respawn = 'Respawn'
     POM = 'POM'
     tSAdminTools = 'tSAdminTools'
 
@@ -60,6 +62,8 @@ class PageTitle(StrEnum):
     tSF_Chatter = f"tSF / {Component.Chatter}"
     tSF_POM = f"tSF / {Component.POM}"
     tSF_tSAdminTools = f"tSF / {Component.tSAdminTools}"
+    tSF_CrewOptions = f"tSF / {Component.CrewOptions}"
+    tSF_Respawn = f"tSF / {Component.Respawn}"
 
     Tests = "Проверки"
 

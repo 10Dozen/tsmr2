@@ -9,7 +9,7 @@ from .tSFModulesHandlers import tSFrameworkSettingsHandler, \
     tSFConversationsHandler, tSFACEActionsHandler, tSFAdminToolsHandler, \
     tSFChatterHandler, tSFInteractivesHandler, tSFJIPTeleportHandler, \
     tSFMissionDefaultsHandler, tSFNotesHandler, tSFPOMHandler, \
-    tSFSettingsHandler
+    tSFSettingsHandler, tSFCrewOptionsHandler, tSFRespawnHandler
 from .tester import Tester
 from .report_generator import ReportGenerator
 from .entities import PageReviewHandler
@@ -43,6 +43,8 @@ class Reviewer:
                 tSFBriefingHandler,
                 tSFIntroTextHandler,
                 tSFMissionConditionsHandler,
+                tSFRespawnHandler,
+                tSFCrewOptionsHandler,
                 tSFCCPHandler,
                 tSFFARPHandler,
                 tSFAuthHandler,

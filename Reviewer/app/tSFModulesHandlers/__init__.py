@@ -20,4 +20,6 @@ from .tsf_interactives_handler import tSFInteractivesHandler
 from .tsf_conversations_handler import tSFConversationsHandler
 from .tsf_chatter_handler import tSFChatterHandler
 from .tsf_pom_handler import tSFPOMHandler
+from .tsf_crewoptions_handler import tSFCrewOptionsHandler
+from .tsf_respawn_handler import tSFRespawnHandler
 from .tsf_admin_tools_handler import tSFAdminToolsHandler
