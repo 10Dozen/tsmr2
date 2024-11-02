@@ -22,7 +22,8 @@ class MissionSqmReader(DataReader):
         "day": 'day='.lower()
     }
     DESCRIPTION_EXT_FILE_DATA = {
-        "overview": 'OVERVIEW('.lower()
+        "overview": 'OVERVIEW('.lower(),
+        "overview_text_pattern": re.compile(r'[\'"](.*)[\'"]', re.IGNORECASE)
     }
 
     def __init__(self, path):
@@ -131,11 +132,13 @@ class MissionSqmReader(DataReader):
             if not check_line.startswith(overview_prefix):
                 continue
 
-            overview_lines.append(
-                line.strip()[prefix_offset:-2]
-                    .split(",",maxsplit=1)[1]
-                    .strip(' "')
-            )
+            #	OVERVIEW("Обзор:");
+            #   OVERVIEW(1, "Обзор:");
+            overview_line = re.compile('.*').findall(line)
+            if not overview_line:
+                continue
+            
+            overview_lines.append(overview_line)
 
         return overview_lines
 
