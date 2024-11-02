@@ -134,7 +134,7 @@ class MissionSqmReader(DataReader):
 
             #	OVERVIEW("Обзор:");
             #   OVERVIEW(1, "Обзор:");
-            overview_line = re.compile('.*').findall(line)
+            overview_line = self.DESCRIPTION_EXT_FILE_DATA['overview_text_pattern'].findall(line)
             if not overview_line:
                 continue
             
