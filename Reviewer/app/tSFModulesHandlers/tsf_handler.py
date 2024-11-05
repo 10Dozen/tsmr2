@@ -41,6 +41,7 @@ class tSFrameworkSettingsHandler(tSFModuleHandler):
         self.reader = tSFrameworkSettingsReader(path)
     
     def is_module_active(self, module_name):
+        print('[tSFrameworkSettingsHandler](is_module_active) Module: %s, State: %s' % (module_name, self.reader.settings_yaml.get(module_name)))
         return self.reader.settings_yaml.get(module_name)
     
     def get_page_data(self):

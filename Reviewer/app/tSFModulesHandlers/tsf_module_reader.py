@@ -28,7 +28,7 @@ class tSFModuleReader(DataReader):
         with open(settings_file, 'r', encoding='utf-8') as f:
             try:
                 self.settings_yaml = yaml.safe_load(f)
-            except yaml.parser.ParserError:
+            except (yaml.parser.ParserError, yaml.scanner.ScannerError):
                 print(f"[Reader-{self.module}] Failed to parse SFML (not a YAML-compatible syntax)")
 
 

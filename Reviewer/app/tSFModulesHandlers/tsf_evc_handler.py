@@ -6,6 +6,7 @@ from .tsf_module_handler import tSFModuleHandler
 
 class tSFEVCHandler(tSFModuleHandler):
     TITLE = PageTitle.tSF_EditorVehicleCrew
+    COMPONENT = Component.EditorVehicleCrew
 
     def __init__(self, path, mission_sqm=None):
         super().__init__(path, mission_sqm)

@@ -131,9 +131,7 @@ class MissionSqmReader(DataReader):
             check_line = line.lower().strip()
             if not check_line.startswith(overview_prefix):
                 continue
-
-            #	OVERVIEW("Обзор:");
-            #   OVERVIEW(1, "Обзор:");
+            
             overview_line = self.DESCRIPTION_EXT_FILE_DATA['overview_text_pattern'].findall(line)
             if not overview_line:
                 continue
