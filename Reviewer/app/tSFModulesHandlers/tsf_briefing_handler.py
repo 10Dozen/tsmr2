@@ -23,7 +23,7 @@ class tSFBriefingReader(tSFModuleReader):
         self.tags = tags
 
     def _parse_briefing_file(self):
-        briefing_content = self._read_file(os.path.join(self.path, self.BRIEFING_FILE))
+        briefing_content = self._read_file_lines(os.path.join(self.path, self.BRIEFING_FILE))
 
         tags = []
         briefing_lines = []

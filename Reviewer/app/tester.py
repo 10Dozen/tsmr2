@@ -94,18 +94,18 @@ class Tester(PageReviewHandler):
         sqm: MissionSqmReader = self.get_component(Component.Mission)
         
         return TestResult(
-            is_success=sqm.overview_picture == 'overview.jpg',
-            extra_data=sqm.overview_picture
+            is_success=sqm.metadata.overview_picture == 'overview.jpg',
+            extra_data=sqm.metadata.overview_picture
         )
 
     @tests(Component.Mission)
     @meta("SQM-002", "Имя миссии соответсвует шаблону", Severity.WARNING,
           "Переименуйте миссию (в редакторе и саму папку миссии), чтобы имя соответствовало шаблону - \n"
-          "Тип + Кол-во слотов + Имя миссии + Версия (например, CO11 Mission Name (1A))")
+          "Тип + Кол-во слотов + Имя миссии + Версия (например, заголовок CO11 Mission Name (1A), папка CO11_Mission_Name_1A)")
     def test_sqm002(self):
         sqm: MissionSqmReader = self.get_component(Component.Mission)
-        title = sqm.title
-        title_regex = r'^(CO|ADV|TVT)[0-9]+\s.+$\s\(.*\)$'
+        title = sqm.metadata.title
+        title_regex = r'^(CO|ADV|TVT)[0-9]+\s.+\s\(.*\)$'
         is_match = re.match(title_regex, title, re.IGNORECASE)
 
         return TestResult(

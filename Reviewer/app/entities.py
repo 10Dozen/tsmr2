@@ -4,9 +4,9 @@ from .enums import PageStatus, InfoType, Severity, RawContentLanguage
 class InfoValue:
     def __init__(self, title: str, value, type: InfoType):
         self.title = title
-        self.value = value 
+        self.value = value
         self.type = type if type else InfoType.PLAIN
-    
+
     def export(self) -> dict:
         return {
             "name": self.title,
@@ -16,13 +16,13 @@ class InfoValue:
 
 
 class RawContent:
-    def __init__(self, filename: str, 
-                 content: list[str], 
+    def __init__(self, filename: str,
+                 content: list[str],
                  language: RawContentLanguage) -> None:
         self.filename = filename
         self.content = content
         self.language = language
-    
+
     def export(self) -> dict:
         return {
             "filename": self.filename,
@@ -32,8 +32,8 @@ class RawContent:
 
 
 class TestResult:
-    def __init__(self, is_success: bool = True, 
-                 message: str = "", 
+    def __init__(self, is_success: bool = True,
+                 message: str = "",
                  extra_data: list = None) -> None:
         self.name: str = "Unnamed"
         self.relates_to: str = ""
@@ -41,7 +41,7 @@ class TestResult:
         self.succeed: bool = is_success
         self.message: str = message
         self.extra_data: list[str|int|float] = extra_data
-    
+
     def set_metadata(self, name: str, severity: Severity):
         self.name = name
         self.severity = severity
@@ -51,7 +51,7 @@ class TestResult:
 
     def __repr__(self):
         return str(self.export())
-    
+
     def export(self) -> dict:
         output = [
             f'Компонент "{self.relates_to.upper()}"',
@@ -62,9 +62,9 @@ class TestResult:
             output.append('')
             output.append(f'Доп. информация:')
             output.append(f'  {self.extra_data}')
-            
+
         return "\n".join(output)
-    
+
 
 class PageData:
     def __init__(self, title: str):
@@ -72,17 +72,17 @@ class PageData:
         self.status = PageStatus.OK
         self.info = []
         self.raw_content = []
-    
+
     def add_info(self, title: str, value, type: InfoType|None = None):
         self.info.append(
             InfoValue(title, value, type)
         )
-    
+
     def add_raw_content(self, filename: str, content: list[str], language: RawContentLanguage):
         self.raw_content.append(
             RawContent(filename, content, language)
         )
-    
+
     def export(self) -> dict:
         return {
             "name": self.name,
@@ -103,11 +103,17 @@ class PageReviewHandler:
     def get_page_data(self):
         return PageData(self.TITLE)
 
+
 class DataReader:
     def _read_files(self):
         pass
 
     @staticmethod
-    def _read_file(path):        
+    def _read_file_lines(path):
         with open(path, 'r', encoding='utf-8') as f:
             return f.readlines()
+
+    @staticmethod
+    def _read_file(path):
+        with open(path, 'r', encoding='utf-8') as f:
+            return f.read()
