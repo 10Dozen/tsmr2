@@ -100,7 +100,7 @@ class MissionSqmReader(DataReader):
 
         # Date
         year = str(sqm_data["Mission"]["Intel"]["year"])
-        month = str(sqm_data["Mission"]["Intel"]["month"])
+        month = str(sqm_data["Mission"]["Intel"].get("month", 1))
         day = str(sqm_data["Mission"]["Intel"]["day"])
         if year:
             if not month or not day:
